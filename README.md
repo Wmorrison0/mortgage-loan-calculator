@@ -1,2 +1,2 @@
-# mortgage-payment-calculator
-An interactive mortgage calculator built with vanilla JavaScript featuring fixed-rate and adjustable-rate loans, amortization schedules, PMI calculations, escrow costs, extra payment analysis, CSV export, and responsive data visualizations.
+# mortgage-loan-calculator
+Interactive mortgage calculator built with HTML, CSS, and JavaScript featuring fixed-rate and ARM loans, PMI, escrow costs, amortization schedules, extra payment analysis, CSV export, and balance visualization.
