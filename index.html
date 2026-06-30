@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mortgage Loan Calculator | Interactive Finance App</title>
+  <link rel="stylesheet" href="./mortgage-calculator.css" />
+</head>
+
+<body>
+  <header class="wrap hero">
+    <div class="heroTop">
+      <div class="eyebrow">Mortgage Analysis Tool</div>
+      <h1>Mortgage Loan Calculator</h1>
+      <p class="sub">
+        Analyze fixed-rate and adjustable-rate mortgages with payment breakdowns,
+        amortization schedules, PMI, escrow costs, payoff timing, CSV export, and balance visualization.
+      </p>
+    </div>
+    <div class="heroLine"></div>
+  </header>
+
+  <main class="wrap">
+    <div class="gridTop">
+      <section class="card">
+        <h2>Loan details</h2>
+
+        <div class="form">
+          <div class="field">
+            <label for="price">Home price <span class="req">*</span></label>
+            <input id="price" type="number" min="0" step="1000" placeholder="e.g., 400000" />
+          </div>
+
+          <div class="field">
+            <label>Down payment <span class="req">*</span></label>
+            <div class="row">
+              <input id="downAmt" type="number" min="0" step="500" placeholder="e.g., 50000" />
+              <span class="hint">($)</span>
+            </div>
+            <div class="row">
+              <input id="downPct" type="number" min="0" max="100" step="0.1" placeholder="e.g., 12.5" />
+              <span class="hint">(%)</span>
+            </div>
+            <p class="tiny">Enter either $ or %; the other will auto-update when possible.</p>
+          </div>
+
+          <div class="field">
+            <label>Loan type <span class="req">*</span></label>
+
+            <div class="loanTypeGroup" role="radiogroup" aria-label="Loan type">
+              <button type="button" class="typeCard active" data-loan-type="fixed" aria-pressed="true">
+                <span class="typeTitle">Fixed-rate</span>
+              </button>
+
+              <button type="button" class="typeCard" data-loan-type="arm" aria-pressed="false">
+                <span class="typeTitle">Adjustable-rate ARM</span>
+              </button>
+            </div>
+
+            <input id="loanType" type="hidden" value="fixed" />
+          </div>
+
+          <div class="field" id="fixedRateBox">
+            <label for="rate">Fixed APR <span class="req">*</span></label>
+            <div class="row">
+              <input id="rate" type="number" min="0" step="0.01" placeholder="e.g., 7.00" />
+              <span class="hint">%</span>
+            </div>
+          </div>
+
+          <div id="armBox" class="armBox" hidden>
+            <div class="field">
+              <label for="armIntroRate">ARM intro rate <span class="req">*</span></label>
+              <div class="row">
+                <input id="armIntroRate" type="number" min="0" step="0.01" placeholder="e.g., 5.25" />
+                <span class="hint">%</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="armIntroYears">Intro period <span class="req">*</span></label>
+              <div class="row">
+                <input id="armIntroYears" type="number" min="0" step="1" placeholder="e.g., 5" />
+                <span class="hint">years</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="armAdjMonths">Adjustment frequency <span class="req">*</span></label>
+              <div class="row">
+                <input id="armAdjMonths" type="number" min="1" step="1" placeholder="e.g., 12" />
+                <span class="hint">months</span>
+              </div>
+              <p class="tiny">Usually 12 months for a 5/1 ARM.</p>
+            </div>
+
+            <div class="field">
+              <label for="armIndex">Index rate <span class="req">*</span></label>
+              <div class="row">
+                <input id="armIndex" type="number" min="0" step="0.01" placeholder="e.g., 3.50" />
+                <span class="hint">%</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="armMargin">Margin <span class="req">*</span></label>
+              <div class="row">
+                <input id="armMargin" type="number" min="0" step="0.01" placeholder="e.g., 2.25" />
+                <span class="hint">%</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="armCapPerAdj">Cap per adjustment <span class="req">*</span></label>
+              <div class="row">
+                <input id="armCapPerAdj" type="number" min="0" step="0.01" placeholder="e.g., 2.00" />
+                <span class="hint">%</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="armLifeCap">Lifetime cap above intro <span class="req">*</span></label>
+              <div class="row">
+                <input id="armLifeCap" type="number" min="0" step="0.01" placeholder="e.g., 5.00" />
+                <span class="hint">%</span>
+              </div>
+            </div>
+
+            <div class="tiny note">
+              ARM rule: new APR = index + margin, limited by the adjustment cap and lifetime cap.
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="termYears">Loan term <span class="req">*</span></label>
+            <div class="row">
+              <input id="termYears" type="number" min="1" max="50" step="1" placeholder="e.g., 30" />
+              <span class="hint">years</span>
+            </div>
+          </div>
+
+          <hr class="sep" />
+
+          <div class="field">
+            <label for="taxAnnual">Property tax</label>
+            <div class="row">
+              <input id="taxAnnual" type="number" min="0" step="50" placeholder="e.g., 3000" />
+              <span class="hint">$ / year</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="insAnnual">Homeowners insurance</label>
+            <div class="row">
+              <input id="insAnnual" type="number" min="0" step="50" placeholder="e.g., 1000" />
+              <span class="hint">$ / year</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="hoaMonthly">HOA</label>
+            <div class="row">
+              <input id="hoaMonthly" type="number" min="0" step="10" placeholder="e.g., 0" />
+              <span class="hint">$ / month</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="pmiRate">PMI rate</label>
+            <div class="row">
+              <input id="pmiRate" type="number" min="0" step="0.01" placeholder="e.g., 0.60" />
+              <span class="hint">%</span>
+            </div>
+            <p class="tiny">Applied monthly when down payment is below 20%, until LTV reaches 80%.</p>
+          </div>
+
+          <hr class="sep" />
+
+          <div class="field">
+            <label for="extraMonthly">Extra monthly payment</label>
+            <div class="row">
+              <input id="extraMonthly" type="number" min="0" step="25" placeholder="e.g., 100" />
+              <span class="hint">$ / month</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="calcBtn" type="button">Calculate</button>
+            <button id="sampleBtn" type="button" class="ghost">Generate scenario</button>
+            <button id="resetBtn" type="button" class="ghost">Clear</button>
+            <button id="csvBtn" type="button" class="ghost">Download CSV</button>
+          </div>
+
+          <p id="msg" class="msg" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Results</h2>
+
+        <div class="emptyState" id="emptyState">
+          Enter loan details or generate a realistic scenario to begin.
+        </div>
+
+        <div class="kpis">
+          <div class="kpi">
+            <div class="kpiLabel">Loan amount</div>
+            <div id="loanAmtOut" class="kpiValue">—</div>
+            <div class="kpiSub">Principal borrowed</div>
+          </div>
+
+          <div class="kpi">
+            <div class="kpiLabel">Monthly P&amp;I</div>
+            <div id="piOut" class="kpiValue">—</div>
+            <div class="kpiSub">Month 1 principal + interest</div>
+          </div>
+
+          <div class="kpi">
+            <div class="kpiLabel">Monthly total</div>
+            <div id="totalOut" class="kpiValue">—</div>
+            <div class="kpiSub">PITI + HOA + PMI</div>
+          </div>
+
+          <div class="kpi">
+            <div class="kpiLabel">Total interest</div>
+            <div id="totIntOut" class="kpiValue">—</div>
+            <div class="kpiSub">Over full payoff period</div>
+          </div>
+
+          <div class="kpi">
+            <div class="kpiLabel">Payoff time</div>
+            <div id="payoffOut" class="kpiValue">—</div>
+            <div class="kpiSub">Including extra payments</div>
+          </div>
+
+          <div class="kpi">
+            <div class="kpiLabel">Interest saved</div>
+            <div id="savedOut" class="kpiValue">—</div>
+            <div class="kpiSub">Versus no extra payment</div>
+          </div>
+        </div>
+
+        <div class="miniCard">
+          <h3>Payment breakdown — month 1</h3>
+          <div class="breakdown">
+            <div><span class="dot"></span>Principal + Interest</div><div id="bPI">—</div>
+            <div><span class="dot"></span>Tax escrow</div><div id="bTax">—</div>
+            <div><span class="dot"></span>Insurance escrow</div><div id="bIns">—</div>
+            <div><span class="dot"></span>HOA</div><div id="bHOA">—</div>
+            <div><span class="dot"></span>PMI</div><div id="bPMI">—</div>
+            <div class="strong">Total</div><div id="bTotal" class="strong">—</div>
+          </div>
+        </div>
+
+        <div class="miniCard">
+          <div class="row space">
+            <h3>Balance over time</h3>
+            <div class="tiny">Simple payoff visualization</div>
+          </div>
+          <div class="chartWrap chartTall">
+            <canvas id="balanceChart" width="900" height="320"></canvas>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card scheduleCard">
+      <div class="row space">
+        <h2>Amortization schedule</h2>
+        <label class="toggle">
+          <input type="checkbox" id="showAll" />
+          <span>Show all rows</span>
+        </label>
+      </div>
+
+      <div class="tableWrap">
+        <table id="schedTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>APR</th>
+              <th>Payment</th>
+              <th>Interest</th>
+              <th>Principal</th>
+              <th>Extra</th>
+              <th>PMI</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <p class="tiny">Default view shows first 10 months + last 10 months.</p>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <span>Vanilla HTML/CSS/JS • Fixed + ARM amortization • PMI • Escrow • CSV export</span>
+  </footer>
+
+  <script defer src="./mortgage-calculator.js"></script>
+</body>
+</html>
